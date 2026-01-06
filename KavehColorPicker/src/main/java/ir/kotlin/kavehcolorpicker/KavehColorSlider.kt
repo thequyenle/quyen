@@ -1,9 +1,12 @@
 package ir.kotlin.kavehcolorpicker
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -246,45 +249,51 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
 
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDraw(canvas: Canvas) {
         // Vẽ thanh slider (line)
-        canvas.drawLine(
-            drawingStart,
-            drawingTop,
-            widthF,
-            drawingTop,
-            linePaint
+        canvas.drawLine(drawingStart, drawingTop, widthF, drawingTop, linePaint)
+
+        // Kích thước của thumb
+        val thumbWidth = 16 * resources.displayMetrics.density
+        val thumbHeight = 28 * resources.displayMetrics.density
+        val cornerRadius = 4 * resources.displayMetrics.density
+
+        // ====== THAY ĐỔI CON SỐ Ở ĐÂY ======
+        val thumbStrokeWidth = 4 * resources.displayMetrics.density  // ← ĐỔI CON SỐ 2 THÀNH 1, 3, 4, 5...
+
+        // Tọa độ viền ngoài
+        val leftOuter = circleX - thumbWidth / 2
+        val topOuter = drawingTop - thumbHeight / 2
+        val rightOuter = circleX + thumbWidth / 2
+        val bottomOuter = drawingTop + thumbHeight / 2
+
+        // Tọa độ phần trong (trừ đi độ dày viền)
+        val leftInner = leftOuter + thumbStrokeWidth
+        val topInner = topOuter + thumbStrokeWidth
+        val rightInner = rightOuter - thumbStrokeWidth
+        val bottomInner = bottomOuter - thumbStrokeWidth
+
+        // Vẽ viền ngoài
+        canvas.drawRoundRect(
+            RectF(leftOuter, topOuter, rightOuter, bottomOuter),
+            cornerRadius, cornerRadius,
+            circlePaint.apply {
+                color = strokeColor
+                style = Paint.Style.FILL
+            }
         )
 
-        // Kích thước của thumb vuông
-        val thumbSizeOuter = heightHalf * 2f  // Đường kính cũ của vòng tròn ngoài
-        val thumbSizeInner = thumbSizeOuter - (strokeSize * 2f)  // Vuông trong nhỏ hơn để tạo viền
-
-        // Tính toán tọa độ để căn giữa thumb theo chiều dọc (vì line nằm ở drawingTop)
-        val halfOuter = thumbSizeOuter / 2f
-        val halfInner = thumbSizeInner / 2f
-
-        val leftOuter = circleX - halfOuter
-        val topOuter = drawingTop - halfOuter
-        val rightOuter = circleX + halfOuter
-        val bottomOuter = drawingTop + halfOuter
-
-        val leftInner = circleX - halfInner
-        val topInner = drawingTop - halfInner
-        val rightInner = circleX + halfInner
-        val bottomInner = drawingTop + halfInner
-
-        // Vẽ viền ngoài (stroke trắng)
-        canvas.drawRect(leftOuter, topOuter, rightOuter, bottomOuter, circlePaint.apply {
-            color = strokeColor
-        })
-
-        // Vẽ phần trong (màu chính của slider)
-        canvas.drawRect(leftInner, topInner, rightInner, bottomInner, circlePaint.apply {
-            color = circleColor
-        })
+        // Vẽ phần trong
+        canvas.drawRoundRect(
+            RectF(leftInner, topInner, rightInner, bottomInner),
+            cornerRadius, cornerRadius,
+            circlePaint.apply {
+                color = circleColor
+                style = Paint.Style.FILL
+            }
+        )
     }
-
     override fun onSaveInstanceState(): Parcelable? {
         return Bundle().apply {
             // Save current position of circle as factors to later restore it's state.
