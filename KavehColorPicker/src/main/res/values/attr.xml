@@ -10,6 +10,7 @@
 
         <attr name="sliderStrokeSize" format="dimension"/>
         <attr name="sliderStrokeColor" format="color"/>
+        <attr name="thumbCornerRadius" format="dimension"/>
 
     </declare-styleable>
 

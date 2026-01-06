@@ -73,6 +73,12 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
             invalidate()
         }
 
+    var thumbCornerRadius = dp(4)
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     private var defaultPaddingVertical = dp(12)
     private var wrapContentSize = dp(48).toInt()
 
@@ -87,6 +93,8 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
                 strokeSize = getDimension(R.styleable.MananSlider_sliderStrokeSize, strokeSize)
 
                 strokeColor = getColor(R.styleable.MananSlider_sliderStrokeColor, strokeColor)
+
+                thumbCornerRadius = getDimension(R.styleable.MananSlider_thumbCornerRadius, thumbCornerRadius)
 
             } finally {
                 recycle()
@@ -257,7 +265,6 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
         // Kích thước của thumb
         val thumbWidth = 16 * resources.displayMetrics.density
         val thumbHeight = 28 * resources.displayMetrics.density
-        val cornerRadius = 4 * resources.displayMetrics.density
 
         // ====== THAY ĐỔI CON SỐ Ở ĐÂY ======
         val thumbStrokeWidth = 4 * resources.displayMetrics.density  // ← ĐỔI CON SỐ 2 THÀNH 1, 3, 4, 5...
@@ -277,7 +284,7 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
         // Vẽ viền ngoài
         canvas.drawRoundRect(
             RectF(leftOuter, topOuter, rightOuter, bottomOuter),
-            cornerRadius, cornerRadius,
+            thumbCornerRadius, thumbCornerRadius,
             circlePaint.apply {
                 color = strokeColor
                 style = Paint.Style.FILL
@@ -287,7 +294,7 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
         // Vẽ phần trong
         canvas.drawRoundRect(
             RectF(leftInner, topInner, rightInner, bottomInner),
-            cornerRadius, cornerRadius,
+            thumbCornerRadius, thumbCornerRadius,
             circlePaint.apply {
                 color = circleColor
                 style = Paint.Style.FILL
