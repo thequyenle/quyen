@@ -221,45 +221,29 @@ class KavehColorPicker(context: Context, attributeSet: AttributeSet?) :
 
     override fun onDraw(canvas: Canvas) {
         canvas.run {
-            // Saturation gradient: white → full hue
-            drawRect(
-                drawingStart, drawingTop, widthF, heightF,
-                linePaint.apply { shader = colorShader }
-            )
+            drawRect(drawingStart, drawingTop, widthF, heightF, linePaint.apply {
+                shader = colorShader
+            })
 
-            // Brightness gradient: transparent → black
-            drawRect(
-                drawingStart, drawingTop, widthF, heightF,
-                linePaint.apply { shader = darknessShader }
-            )
+            drawRect(drawingStart, drawingTop, widthF, heightF, linePaint.apply {
+                shader = darknessShader
+            })
 
-            // Outer white border (square)
-            drawRect(
-                circleX - circleIndicatorRadius,
-                circleY - circleIndicatorRadius,
-                circleX + circleIndicatorRadius,
-                circleY + circleIndicatorRadius,
+            drawCircle(
+                circleX,
+                circleY,
+                circleIndicatorRadius,
                 circlePaint.apply {
                     color = strokeColor
-                    style = Paint.Style.STROKE
-                    strokeWidth = strokeSize
-                    isAntiAlias = true
-                }
-            )
+                })
 
-            // Inner fill with selected color (slightly smaller square)
-            val innerSize = circleIndicatorRadius - strokeSize
-            drawRect(
-                circleX - innerSize,
-                circleY - innerSize,
-                circleX + innerSize,
-                circleY + innerSize,
+            drawCircle(
+                circleX,
+                circleY,
+                circleIndicatorRadius - strokeSize,
                 circlePaint.apply {
                     color = colorWithFullAlpha
-                    style = Paint.Style.FILL
-                    isAntiAlias = true
-                }
-            )
+                })
         }
     }
 

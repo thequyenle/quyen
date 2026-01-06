@@ -247,6 +247,7 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
     }
 
     override fun onDraw(canvas: Canvas) {
+        // Vẽ thanh slider (line)
         canvas.drawLine(
             drawingStart,
             drawingTop,
@@ -255,22 +256,33 @@ abstract class KavehColorSlider(context: Context, attributeSet: AttributeSet?) :
             linePaint
         )
 
-        canvas.drawCircle(
-            circleX,
-            drawingTop,
-            heightHalf,
-            circlePaint.apply {
-                color = strokeColor
-            })
+        // Kích thước của thumb vuông
+        val thumbSizeOuter = heightHalf * 2f  // Đường kính cũ của vòng tròn ngoài
+        val thumbSizeInner = thumbSizeOuter - (strokeSize * 2f)  // Vuông trong nhỏ hơn để tạo viền
 
-        canvas.drawCircle(
-            circleX,
-            drawingTop,
-            heightHalf - strokeSize,
-            circlePaint.apply {
-                color = circleColor
-            })
+        // Tính toán tọa độ để căn giữa thumb theo chiều dọc (vì line nằm ở drawingTop)
+        val halfOuter = thumbSizeOuter / 2f
+        val halfInner = thumbSizeInner / 2f
 
+        val leftOuter = circleX - halfOuter
+        val topOuter = drawingTop - halfOuter
+        val rightOuter = circleX + halfOuter
+        val bottomOuter = drawingTop + halfOuter
+
+        val leftInner = circleX - halfInner
+        val topInner = drawingTop - halfInner
+        val rightInner = circleX + halfInner
+        val bottomInner = drawingTop + halfInner
+
+        // Vẽ viền ngoài (stroke trắng)
+        canvas.drawRect(leftOuter, topOuter, rightOuter, bottomOuter, circlePaint.apply {
+            color = strokeColor
+        })
+
+        // Vẽ phần trong (màu chính của slider)
+        canvas.drawRect(leftInner, topInner, rightInner, bottomInner, circlePaint.apply {
+            color = circleColor
+        })
     }
 
     override fun onSaveInstanceState(): Parcelable? {
